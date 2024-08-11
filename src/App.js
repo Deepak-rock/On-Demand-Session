@@ -88,7 +88,23 @@ const projectsList = [
 ]
 
 class App extends Component {
+  state = {activeId: tabsList[0].tabId}
+
+  updateActiveTabId = tabId => {
+    this.setState({activeId: tabId})
+  }
+
+  getFilteredProjects = () => {
+    const {activeId} = this.state
+    const filteredProjects = projectsList.filter(
+      eachProjectDetails => eachProjectDetails.category === activeId,
+    )
+    return filteredProjects
+  }
+
   render() {
+    const {activeId} = this.state
+    const filteredProjects = this.getFilteredProjects()
     return (
       <div className="app-container">
         <Header />
@@ -101,12 +117,17 @@ class App extends Component {
 
         <ul className="tabs-container">
           {tabsList.map(tabDetails => (
-            <TabItem key={tabDetails.tabId} tabDetails={tabDetails} />
+            <TabItem
+              key={tabDetails.tabId}
+              tabDetails={tabDetails}
+              updateActiveTabId={this.updateActiveTabId}
+              isActive={activeId === tabDetails.tabId}
+            />
           ))}
         </ul>
 
         <ul className="project-list-container">
-          {projectsList.map(projectDetails => (
+          {filteredProjects.map(projectDetails => (
             <ProjectItem
               key={projectDetails.projectId}
               projectDetails={projectDetails}
